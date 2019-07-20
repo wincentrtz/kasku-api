@@ -1,33 +1,25 @@
 <?php
 namespace App\Http\Controllers;
 use Illuminate\Http\Request;
+
+use App\Http\Requests\RegisterRequest;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
-use App\User;
+
+use App\Services\AuthService;
+
 class AuthController extends Controller
 {
-    /**
-     * Create user
-     *
-     * @param  [string] name
-     * @param  [string] email
-     * @param  [string] password
-     * @param  [string] password_confirmation
-     * @return [string] message
-     */
-    public function signup(Request $request)
+    protected $service;
+    public function __construct(AuthService $service)
     {
-        $request->validate([
-            'name' => 'required|string',
-            'email' => 'required|string|email|unique:users',
-            'password' => 'required|string|confirmed'
-        ]);
-        $user = new User([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => bcrypt($request->password)
-        ]);
-        $user->save();
+        $this->service = $service;
+    }
+    
+    public function signup(RegisterRequest $request)
+    {
+        $request->validated();
+        $this->service->register($request);
         return response()->json([
             'message' => 'Successfully created user!'
         ], 201);
