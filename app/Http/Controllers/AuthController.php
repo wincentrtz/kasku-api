@@ -1,11 +1,12 @@
 <?php
 namespace App\Http\Controllers;
 use Illuminate\Http\Request;
-
-use App\Http\Requests\RegisterRequest;
 use Illuminate\Support\Facades\Auth;
+use Symfony\Component\HttpFoundation\Response;
 use Carbon\Carbon;
 
+use App\Http\Responses\Entity\Auth\RegisterResponse;
+use App\Http\Requests\RegisterRequest;
 use App\Services\AuthService;
 
 class AuthController extends Controller
@@ -13,6 +14,7 @@ class AuthController extends Controller
     protected $service;
     public function __construct(AuthService $service)
     {
+        parent::__construct();
         $this->service = $service;
     }
     
@@ -20,9 +22,11 @@ class AuthController extends Controller
     {
         $request->validated();
         $this->service->register($request);
-        return response()->json([
-            'message' => 'Successfully created user!'
-        ], 201);
+        return $this->responseBuilder
+                ->code(Response::HTTP_CREATED)
+                ->data((new RegisterResponse($request->name, $request->email))->toResponse())
+                ->build()
+                ->toResponse();
     }
   
     /**
