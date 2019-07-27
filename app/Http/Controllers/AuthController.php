@@ -6,7 +6,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Carbon\Carbon;
 
 use App\Http\Responses\Entity\Auth\RegisterResponse;
-use App\Http\Requests\RegisterRequest;
+use App\Http\Requests\Auth\RegisterRequest;
 use App\Services\AuthService;
 
 class AuthController extends Controller
@@ -28,17 +28,7 @@ class AuthController extends Controller
                 ->build()
                 ->toResponse();
     }
-  
-    /**
-     * Login user and create token
-     *
-     * @param  [string] email
-     * @param  [string] password
-     * @param  [boolean] remember_me
-     * @return [string] access_token
-     * @return [string] token_type
-     * @return [string] expires_at
-     */
+    
     public function login(Request $request)
     {
         $request->validate([
