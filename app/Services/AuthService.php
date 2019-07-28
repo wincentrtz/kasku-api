@@ -2,7 +2,7 @@
 
 namespace App\Services;
 
-use App\Http\Requests\RegisterRequest;
+use App\Http\Requests\Auth\RegisterRequest;
 
 interface AuthService
 {

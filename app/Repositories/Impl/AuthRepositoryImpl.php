@@ -2,7 +2,7 @@
 
 namespace App\Repositories\Impl;
 
-use App\Http\Requests\RegisterRequest;
+use App\Http\Requests\Auth\RegisterRequest;
 use App\Repositories\AuthRepository;
 use App\User;
 

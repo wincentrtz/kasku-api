@@ -2,7 +2,7 @@
 
 namespace App\Repositories;
 
-use App\Http\Requests\RegisterRequest;
+use App\Http\Requests\Auth\RegisterRequest;
 
 interface AuthRepository
 {
