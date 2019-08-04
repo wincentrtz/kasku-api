@@ -6,7 +6,9 @@ use Symfony\Component\HttpFoundation\Response;
 use Carbon\Carbon;
 
 use App\Http\Responses\Entity\Auth\RegisterResponse;
+use App\Http\Responses\Entity\Auth\LoginResponse;
 use App\Http\Requests\Auth\RegisterRequest;
+use App\Http\Requests\Auth\LoginRequest;
 use App\Services\AuthService;
 
 class AuthController extends Controller
@@ -29,31 +31,15 @@ class AuthController extends Controller
                 ->toResponse();
     }
     
-    public function login(Request $request)
+    public function login(LoginRequest $request)
     {
-        $request->validate([
-            'email' => 'required|string|email',
-            'password' => 'required|string',
-            'remember_me' => 'boolean'
-        ]);
-        $credentials = request(['email', 'password']);
-        if(!Auth::attempt($credentials))
-            return response()->json([
-                'message' => 'Unauthorized'
-            ], 401);
-        $user = $request->user();
-        $tokenResult = $user->createToken('Personal Access Token');
-        $token = $tokenResult->token;
-        if ($request->remember_me)
-            $token->expires_at = Carbon::now()->addWeeks(1);
-        $token->save();
-        return response()->json([
-            'access_token' => $tokenResult->accessToken,
-            'token_type' => 'Bearer',
-            'expires_at' => Carbon::parse(
-                $tokenResult->token->expires_at
-            )->toDateTimeString()
-        ]);
+        $request->validated();
+        $tokenResult = $this->service->login($request);
+        return $this->responseBuilder
+                ->code(Response::HTTP_OK)
+                ->data((new LoginResponse($tokenResult->accessToken, $tokenResult->token->expires_at))->toResponse())
+                ->build()
+                ->toResponse();
     }
   
     public function logout(Request $request)
